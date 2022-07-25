@@ -1,35 +1,58 @@
-import { TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
 import { AppComponent } from './app.component';
+import { By } from '@angular/platform-browser';
+import { DebugElement } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+
+const dispatchFakeEvent = (
+  element: EventTarget,
+  type: string,
+  bubbles: boolean = false
+): void => {
+  const event = document.createEvent('event');
+  event.initEvent(type, bubbles, false);
+  element.dispatchEvent(event);
+};
+
+const markFieldAsTouched = (element: DebugElement) => {
+  dispatchFakeEvent(element.nativeElement, 'blur');
+};
 
 describe('AppComponent', () => {
-  beforeEach(async () => {
+  let fixture: ComponentFixture<AppComponent>;
+  let component: AppComponent;
+
+  const setup = async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule
-      ],
-      declarations: [
-        AppComponent
-      ],
+      declarations: [AppComponent],
+      imports: [ReactiveFormsModule],
     }).compileComponents();
-  });
 
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
-  });
-
-  it(`should have as title 'angular-karma-and-testing-library'`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app.title).toEqual('angular-karma-and-testing-library');
-  });
-
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
+    fixture = TestBed.createComponent(AppComponent);
+    component = fixture.componentInstance;
     fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.content span')?.textContent).toContain('angular-karma-and-testing-library app is running!');
+  };
+
+  it('should render a component with testing angular', async () => {
+    await setup();
+
+    expect(component).toBeTruthy();
+  });
+
+  it('should show erro message required with testing angular', async () => {
+    await setup();
+
+    const appComponent: DebugElement = fixture.debugElement;
+
+    const input = appComponent.query(By.css('input'));
+    markFieldAsTouched(input);
+
+    fixture.detectChanges();
+
+    const error = appComponent.query(By.css('p')).nativeElement;
+
+    expect(error).toBeTruthy();
+    expect(error).toHaveTextContent('Campo obrigatorio');
   });
 });

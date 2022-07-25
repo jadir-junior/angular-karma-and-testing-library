@@ -107,5 +107,8 @@
       }
     }
   },
-  "defaultProject": "angular-karma-and-testing-library"
+  "defaultProject": "angular-karma-and-testing-library",
+  "cli": {
+    "analytics": "7c9fad6c-f7b0-4cbd-beb4-43e3013759fc"
+  }
 }
